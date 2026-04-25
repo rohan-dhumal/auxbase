@@ -1,8 +1,9 @@
 import "dotenv/config";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import authRoutes from "./routes/auth.routes"
+import authRoutes from "./routes/auth.routes";
+import userRoutes from './routes/user.routes';
 
 const app = express();
 const APP_PORT = process.env.PORT || 5000;
@@ -15,12 +16,18 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/health', (req, res) => {
     return res.json({
         status: 'ok',
         message: 'Auxbase API is running'
     });
+});
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    console.error(err.message);
+    res.status(500).json({ message: err.message || 'Internal server error' });
 });
 
 app.listen(APP_PORT, () => {
