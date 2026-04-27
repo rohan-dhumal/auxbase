@@ -63,7 +63,6 @@ const LoginPage = () => {
                                 <Input
                                     id="email"
                                     type="email"
-                                    placeholder="you@example.com"
                                     {...register('email')}
                                 />
                                 {errors.email && (
@@ -76,7 +75,6 @@ const LoginPage = () => {
                                 <Input
                                     id="password"
                                     type="password"
-                                    placeholder="••••••••"
                                     {...register('password')}
                                 />
                                 {errors.password && (

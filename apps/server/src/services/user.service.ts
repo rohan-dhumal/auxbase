@@ -1,5 +1,6 @@
 import prisma from '../config/prisma'
 import type { Role } from '../middleware/authorize'
+import { comparePassword, hashPassword } from '../utils/hash'
 
 export const listUsers = async (
     page: number = 1,
@@ -136,5 +137,25 @@ export const activateUser = async (id: string) => {
             status: true,
             updatedAt: true,
         },
+    })
+}
+
+export const changePassword = async (
+    id: string,
+    currentPassword: string,
+    newPassword: string
+) => {
+    const user = await prisma.user.findUnique({ where: { id } })
+
+    if (!user) throw new Error('User not found')
+
+    const valid = await comparePassword(currentPassword, user.password)
+    if (!valid) throw new Error('Current password is incorrect')
+
+    const hashed = await hashPassword(newPassword)
+
+    await prisma.user.update({
+        where: { id },
+        data: { password: hashed },
     })
 }

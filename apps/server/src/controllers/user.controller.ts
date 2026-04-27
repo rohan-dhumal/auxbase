@@ -7,6 +7,7 @@ import {
     updateUser,
     deactivateUser,
     activateUser,
+    changePassword,
 } from '../services/user.service'
 
 export const getUsers = async (req: AuthRequest, res: Response) => {
@@ -21,7 +22,7 @@ export const getUsers = async (req: AuthRequest, res: Response) => {
 }
 
 export const getUser = async (req: AuthRequest, res: Response) => {
-    const id  = req.params.id as string;
+    const id = req.params.id as string;
 
     if (!id) {
         res.status(400).json({ message: 'User ID is required' })
@@ -33,7 +34,7 @@ export const getUser = async (req: AuthRequest, res: Response) => {
 }
 
 export const editUser = async (req: AuthRequest, res: Response) => {
-    const id  = req.params.id as string;
+    const id = req.params.id as string;
 
     if (!id) {
         res.status(400).json({ message: 'User ID is required' })
@@ -52,7 +53,7 @@ export const editUser = async (req: AuthRequest, res: Response) => {
 }
 
 export const deactivate = async (req: AuthRequest, res: Response) => {
-    const id  = req.params.id as string;
+    const id = req.params.id as string;
 
     if (!id) {
         res.status(400).json({ message: 'User ID is required' })
@@ -69,7 +70,7 @@ export const deactivate = async (req: AuthRequest, res: Response) => {
 }
 
 export const activate = async (req: AuthRequest, res: Response) => {
-    const id  = req.params.id as string;
+    const id = req.params.id as string;
 
     if (!id) {
         res.status(400).json({ message: 'User ID is required' })
@@ -83,4 +84,22 @@ export const activate = async (req: AuthRequest, res: Response) => {
 
     const user = await activateUser(id)
     res.json({ message: 'User activated successfully', user })
+}
+
+export const updatePassword = async (req: AuthRequest, res: Response) => {
+    const id = req.params.id as string
+    const { currentPassword, newPassword } = req.body
+
+    if (!currentPassword || !newPassword) {
+        res.status(400).json({ message: 'Both current and new password are required' })
+        return
+    }
+
+    if (req.user?.userId !== id) {
+        res.status(403).json({ message: 'You can only change your own password' })
+        return
+    }
+
+    await changePassword(id, currentPassword, newPassword)
+    res.json({ message: 'Password changed successfully' })
 }

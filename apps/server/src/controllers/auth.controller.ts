@@ -50,10 +50,15 @@ export const refresh = async (req: Request, res: Response) => {
         return
     }
 
-    const { accessToken, refreshToken } = await refreshTokens(token)
+    try {
+        const { accessToken, refreshToken, user } = await refreshTokens(token)
 
-    res.cookie(REFRESH_TOKEN_COOKIE, refreshToken, cookieOptions)
-    res.json({ accessToken })
+        res.cookie(REFRESH_TOKEN_COOKIE, refreshToken, cookieOptions)
+        res.json({ accessToken, user })
+    } catch {
+        res.clearCookie(REFRESH_TOKEN_COOKIE, cookieOptions)
+        res.status(401).json({ message: 'Invalid or expired refresh token' })
+    }
 }
 
 export const logout = async (req: Request, res: Response) => {

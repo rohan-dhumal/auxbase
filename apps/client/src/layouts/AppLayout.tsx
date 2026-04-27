@@ -5,6 +5,8 @@ import { Separator } from '@/components/ui/separator'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { toast } from 'sonner'
 import api from '@/lib/api'
+import { Sun, Moon } from 'lucide-react'
+import { useThemeStore } from '@/store/themeStore'
 
 const navItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
@@ -13,6 +15,7 @@ const navItems = [
 ]
 
 const AppLayout = () => {
+    const { theme, toggleTheme } = useThemeStore();
     const { user, clearAuth } = useAuthStore()
     const navigate = useNavigate()
 
@@ -82,6 +85,16 @@ const AppLayout = () => {
                             <p className="text-sm font-medium truncate">{user?.name}</p>
                             <p className="text-xs text-muted-foreground truncate">{user?.role}</p>
                         </div>
+                        <button
+                            onClick={toggleTheme}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                        >
+                            {theme === 'light' ? (
+                                <Moon className="h-4 w-4" />
+                            ) : (
+                                <Sun className="h-4 w-4" />
+                            )}
+                        </button>
                         <button
                             onClick={handleLogout}
                             className="text-muted-foreground hover:text-foreground transition-colors"

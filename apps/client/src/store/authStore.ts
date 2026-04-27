@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import { setAccessToken } from '@/lib/api'
 
-interface User {
+export interface User {
     id: string
     name: string
     email: string

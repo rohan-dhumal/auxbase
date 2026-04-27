@@ -6,6 +6,7 @@ import RegisterPage from '@/pages/RegisterPage'
 import DashboardPage from '@/pages/DashboardPage'
 import UsersPage from '@/pages/UsersPage'
 import SettingsPage from '@/pages/SettingsPage'
+import ErrorBoundary from '@/components/ErrorBoundary'
 
 const router = createBrowserRouter([
     {
@@ -26,19 +27,29 @@ const router = createBrowserRouter([
         children: [
             {
                 path: 'dashboard',
-                element: <DashboardPage />,
+                element: (
+                    <ErrorBoundary>
+                        <DashboardPage />
+                    </ErrorBoundary>
+                ),
             },
             {
                 path: 'users',
                 element: (
                     <ProtectedRoute allowedRoles={['SUPER_ADMIN', 'ADMIN']}>
-                        <UsersPage />
+                        <ErrorBoundary>
+                            <UsersPage />
+                        </ErrorBoundary>
                     </ProtectedRoute>
                 ),
             },
             {
                 path: 'settings',
-                element: <SettingsPage />,
+                element: (
+                    <ErrorBoundary>
+                        <SettingsPage />
+                    </ErrorBoundary>
+                ),
             },
         ],
     },

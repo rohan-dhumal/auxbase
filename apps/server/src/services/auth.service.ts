@@ -86,25 +86,30 @@ export const refreshTokens = async (token: string) => {
 
     const user = await prisma.user.findUnique({
         where: { id: payload.userId },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            role: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+        },
     })
 
-    if (!user) {
-        throw new Error('User not found')
-    }
+    if (!user) throw new Error('User not found')
 
     const newPayload = { userId: user.id, email: user.email, role: user.role }
     const accessToken = generateAccessToken(newPayload)
-    const refreshToken = generateRefreshToken(newPayload)
 
     await prisma.session.update({
         where: { refreshToken: token },
         data: {
-            refreshToken,
             expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
     })
 
-    return { accessToken, refreshToken }
+    return { accessToken, refreshToken: token, user }
 }
 
 export const logoutUser = async (token: string) => {
